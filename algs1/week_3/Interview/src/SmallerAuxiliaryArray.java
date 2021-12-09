@@ -5,45 +5,37 @@ a[2*n−1] is sorted using an auxiliary array of length  n (instead of  2n)
 * */
 
 public class SmallerAuxiliaryArray {
-	private static void	merge(Comparable[] target) {
-		int				auxLength = target.length / 2;
-		int				arrlen = target.length;
-		Comparable[]	aux = new Comparable[auxLength];
-		for (int i = 0; i < auxLength; ++i)
-			aux[i] = target[i];
-		int start = 0, mid = auxLength;
-		for (int i = 0; i < auxLength; ++i) {
-				if (aux[start].compareTo(target[mid]) <= 0) target[i] = aux[start++];
-				else {
-					Comparable buffer = aux[start];
-					aux[(start == 0) ? start : --start] = target[mid];
-					target[mid++] = buffer;
-				}
-			}
-		}
-	private class IntegerCompare implements Comparable<Integer> {
-		Integer	lval;
+	private static void merge(Comparable[] a) {
+        int arrMid = a.length / 2;
+        Comparable[]    aux = new Comparable[arrMid];
+        for (int i = 0; i < arrMid; ++i)
+            aux[i] = a[i];
+        int hi = a.length;
+        int lo = 0;
+        int mid = arrMid;
+        for (int i = 0; i < hi; ++i) {
+                if (mid < hi && lo < arrMid) {
+                    int diff = aux[lo].compareTo(a[mid]);
+                    if (lo < arrMid && diff <= 0) a[i] = aux[lo++];
+                    else if (mid < hi && diff > 0) a[i] = a[mid++];
+                } else {
+                    if (lo < arrMid) a[i] = aux[lo++];
+                    else if (mid < hi) a[i] = a[mid++];
+                }
+        }
+    }
 
-		public IntegerCompare() { lval = 0; }
-		public IntegerCompare(Integer lval) { this.lval = lval; }
-
-		@Override
-		public int	compareTo(Integer rval) {
-			return lval - rval;
-		}
-
-		int		getLVal() { return lval; }
-		void	setLVal(Integer lval) { this.lval = lval; }
-	}
-
-	public static void main(String[] args) {
-		Comparable[]	arr = new Comparable[10];
-		for (int i = 5; i < 10; ++i) arr[i] = Integer.valueOf(i - 5);
-		for (int i = 0; i < 5; ++i) arr[i] = Integer.valueOf(i + 5);
-		System.out.println("Array before mergesort:");
-		for (int i = 0; i < 10; ++i) System.out.print(arr[i].toString() + ((i == 9) ? '\n' : ' '));
-		merge(arr);
-		System.out.println("Array after mergesort:");
-		for (int i = 0; i < 10; ++i) System.out.print(arr[i].toString() + ((i == 9) ? '\n' : ' '));
-	}
+    public static void main(String[] args) {
+        System.out.println("Hello world");
+        Comparable  ex[] = new Comparable[10];
+        ex[0] = 1; ex[1] = 3; ex[2] = 5; ex[3] = 7; ex[4] = 9;
+        ex[5] = 2; ex[6] = 4; ex[7] = 6; ex[8] = 8; ex[9] = 10;
+        System.out.println("Array before merge:");
+        for (int i = 0; i < 10; ++i)
+            System.out.print(ex[i].toString() + ((i == 9) ? '\n' : ' '));
+        merge(ex);
+        System.out.println("Array after merge:");
+        for (int i = 0; i < 10; ++i)
+            System.out.print(ex[i].toString() + ((i == 9) ? '\n' : ' '));
+    }
 }
