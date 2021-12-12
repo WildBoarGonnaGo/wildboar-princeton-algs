@@ -14,14 +14,10 @@ public class SmallerAuxiliaryArray {
         int lo = 0;
         int mid = arrMid;
         for (int i = 0; i < hi; ++i) {
-                if (mid < hi && lo < arrMid) {
-                    int diff = aux[lo].compareTo(a[mid]);
-                    if (lo < arrMid && diff <= 0) a[i] = aux[lo++];
-                    else if (mid < hi && diff > 0) a[i] = a[mid++];
-                } else {
-                    if (lo < arrMid) a[i] = aux[lo++];
-                    else if (mid < hi) a[i] = a[mid++];
-                }
+            if (lo >= arrMid) a[i++] = a[mid++];
+            else if (mid >= hi) a[i++] = aux[lo++];
+            else if (aux[lo].compareTo(a[mid]) <= 0) a[i] = aux[lo++];
+            else a[i] = a[mid++];
         }
     }
 
