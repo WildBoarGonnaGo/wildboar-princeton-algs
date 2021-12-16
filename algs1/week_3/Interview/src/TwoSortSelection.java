@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.Arrays;
+
 public class TwoSortSelection {
     private static void         merge(Comparable[] a, Comparable[]b, Comparable[] cat, int lo, int hi) {
         int i = lo, mid = lo + a.length - 1, j = mid + 1;
@@ -17,15 +19,17 @@ public class TwoSortSelection {
     private static Comparable   kthOfTwo(int k, Comparable[] a, int aLo, int aHi,
                                          Comparable[] b, int bLo, int bHi) {
         int aLen = aHi - aLo, bLen = bHi - bLo;
+        if (k > (aLen + bLen) || k < 1) return -1;
         if (aLen > bLen) return kthOfTwo(k, b, bLo, bHi, a, aLo, aHi);
         if (aLen == 0) return b[k - 1];
         if (k == 1) return min(a[aLo], b[bLo]);
         int aDiff = (int)min(k / 2, aLen);
-        int bDiff = k - aDiff;
-        if (less(b[bDiff], a[aDiff])) return kthOfTwo(k - bDiff, a, aLo,
-                aHi, b, bLo + bDiff + 1, bHi);
-        else return kthOfTwo(k - aDiff, a, aLo + aDiff + 1,
-                aHi, b, bLo, bHi);
+        int bDiff = (int)min(k / 2, bLen);
+        if (less(b[bLo + bDiff - 1], a[aLo + aDiff - 1])) {
+            return kthOfTwo(k - bDiff, a, aLo, aHi,
+                b, bLo + bDiff, bHi);
+        }
+        return kthOfTwo(k - aDiff, a, aLo + aDiff, aHi, b, bLo, bHi);
     }
 
     private static boolean      less(Comparable a, Comparable b) {
@@ -64,7 +68,7 @@ public class TwoSortSelection {
         StdOut.println("rank of array 'k': " + k);
         StdOut.print("Array 'stacked' before sort: ");
         for (int i = 0; i < stacked.length; ++i) StdOut.print(stacked[i].toString() + ((i == stacked.length - 1) ? '\n' : ' '));
-        Comparable rankey = kthOfTwo(k, a, 0, a.length - 1, b, 0, b.length - 1);
+        Comparable rankey = kthOfTwo(k + 1, a, 0, a.length, b, 0, b.length);
         QuickSort.quickSort(stacked);
         StdOut.print("Array 'stacked' after sort: ");
         for (int i = 0; i < stacked.length; ++i) StdOut.print(stacked[i].toString() + ((i == stacked.length - 1) ? '\n' : ' '));
