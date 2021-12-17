@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.Arrays;
+
 public class TwoSortSelection {
     private static void         merge(Comparable[] a, Comparable[]b, Comparable[] cat, int lo, int hi) {
         int i = lo, mid = lo + a.length - 1, j = mid + 1;
@@ -22,11 +24,12 @@ public class TwoSortSelection {
         if (aLen == 0) return b[k - 1];
         if (k == 1) return min(a[aLo], b[bLo]);
         int aDiff = (int)min(k / 2, aLen);
-        int bDiff = k - aDiff;
-        if (less(b[bLo + bDiff - 1], a[aLo + aDiff - 1])) return kthOfTwo(k - bDiff, a, aLo,
-                aHi, b, bLo + bDiff, bHi);
-        else return kthOfTwo(k - aDiff, a, aLo + aDiff,
-                aHi, b, bLo, bHi);
+        int bDiff = (int)min(k / 2, bLen);
+        if (less(b[bLo + bDiff - 1], a[aLo + aDiff - 1])) {
+            return kthOfTwo(k - bDiff, a, aLo, aHi,
+                b, bLo + bDiff, bHi);
+        }
+        return kthOfTwo(k - aDiff, a, aLo + aDiff, aHi, b, bLo, bHi);
     }
 
     private static boolean      less(Comparable a, Comparable b) {
