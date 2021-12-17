@@ -17,14 +17,15 @@ public class TwoSortSelection {
     private static Comparable   kthOfTwo(int k, Comparable[] a, int aLo, int aHi,
                                          Comparable[] b, int bLo, int bHi) {
         int aLen = aHi - aLo, bLen = bHi - bLo;
+        if (k > (aLen + bLen) || k < 1) return -1;
         if (aLen > bLen) return kthOfTwo(k, b, bLo, bHi, a, aLo, aHi);
         if (aLen == 0) return b[k - 1];
         if (k == 1) return min(a[aLo], b[bLo]);
         int aDiff = (int)min(k / 2, aLen);
         int bDiff = k - aDiff;
-        if (less(b[bDiff], a[aDiff])) return kthOfTwo(k - bDiff, a, aLo,
-                aHi, b, bLo + bDiff + 1, bHi);
-        else return kthOfTwo(k - aDiff, a, aLo + aDiff + 1,
+        if (less(b[bLo + bDiff - 1], a[aLo + aDiff - 1])) return kthOfTwo(k - bDiff, a, aLo,
+                aHi, b, bLo + bDiff, bHi);
+        else return kthOfTwo(k - aDiff, a, aLo + aDiff,
                 aHi, b, bLo, bHi);
     }
 
@@ -61,13 +62,15 @@ public class TwoSortSelection {
         for (int i = 0; i < aLen; ++i) stacked[i] = a[i];
         for (int i = aLen; i < aLen + bLen; ++i) stacked[i] = b[i - aLen];
         int k = StdRandom.uniform(0, aLen + bLen - 1);
-        StdOut.println("rank of array 'k': " + k);
+        StdOut.println("rank of array 'k': " + (k + 1));
         StdOut.print("Array 'stacked' before sort: ");
         for (int i = 0; i < stacked.length; ++i) StdOut.print(stacked[i].toString() + ((i == stacked.length - 1) ? '\n' : ' '));
-        Comparable rankey = kthOfTwo(k, a, 0, a.length - 1, b, 0, b.length - 1);
+        Comparable rankey = kthOfTwo(k + 1, a, 0, a.length, b, 0, b.length);
         QuickSort.quickSort(stacked);
         StdOut.print("Array 'stacked' after sort: ");
         for (int i = 0; i < stacked.length; ++i) StdOut.print(stacked[i].toString() + ((i == stacked.length - 1) ? '\n' : ' '));
         StdOut.println("rankey = " + rankey);
+        StdOut.println("List of all decimal dominants (keys with n / 10 or greater frequency) in 'stacked' array: "
+                + QuickSelect.listOfDecDominants(stacked).toString());
     }
 }
