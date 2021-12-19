@@ -1,0 +1,100 @@
+/*String	arrInfo = initial.toString();
+		In stringInput = new In(new Scanner(arrInfo));
+		int		n = stringInput.readInt();
+		int[]	arr = new int[n * n - 1];
+		int		i = 0, blankRow = 0;
+		while (!stringInput.isEmpty()) {
+			int	lval = stringInput.readInt();
+			if (lval != 0) arr[i++] = lval;
+			else blankRow = i / n;
+		}
+		if (initial.dimension() % 2 != 0) return (inversions(arr) % 2 == 0);
+		else return ((inversions(arr) + blankRow) % 2 != 0);*/
+
+private static int		insertion(int[] arr, int lo, int hi) {
+		int inv = 0;
+		for (int i = lo; i <= hi; ++i) {
+			for (int j = i; j > lo; --j) {
+				if (arr[j - 1] > arr[j]) {
+					++inv; exch(arr, j - 1, j);
+				}
+			}
+		}
+		return inv;
+	}
+
+	private static void		exch(int[] arr, int i, int j) {
+		int buffer = arr[i];
+		arr[i] = arr[j];
+		arr[j] = buffer;
+	}
+
+	private static int		merge(int[] arr, int[] aux, int mid, int lo, int hi) {
+		int		inv = 0;
+		for (int i = lo; i <= hi; ++i) aux[i] = arr[i];
+		int i = lo, j = mid + 1;
+		for (int k = lo; k <= hi; ++k) {
+			if (i > mid) arr[k] = aux[j++];
+			else if (j > hi) arr[k] = aux[i++];
+			else if (aux[i] > arr[j]) { arr[k] = aux[j++]; inv += mid - i + 1; }
+			else arr[k] = aux[i++];
+		}
+		return inv;
+	}
+
+	private	static int		count(int[] arr, int[] aux, int lo, int hi) {
+		int len = hi - lo;
+		int inv = 0;
+		if (len <= CUTOFF) {
+			inv += insertion(arr, lo, hi);
+			return inv;
+		}
+		if (lo >= hi) return 0;
+		int mid = lo + (hi - lo) / 2;
+		inv += count(arr, aux, lo, mid);
+		inv += count(arr, aux,mid + 1, hi);
+		inv += merge(arr, aux, mid, lo, hi);
+		return inv;
+	}
+
+	private static int	inversions(int[] arr) {
+		int		n = arr.length;
+		int[]	aux = new int[n];
+		for (int i = 0; i < n ; ++i) aux[i] = arr[i];
+		int inv = count(arr, aux, 0, n - 1);
+		return inv;
+	}
+
+	solList = null;
+    		solvable = false;
+    		if (initial == null) throw new IllegalArgumentException();
+    		this.initial = initial;
+    		MinPQ<Board> assistTool = new MinPQ<>(new hammPriority());
+    		MinPQ<Board> twinTool = new MinPQ<>(new hammPriority());
+    		ArrayList<Board> orig = new ArrayList<>();
+    		ArrayList<Board> twin = new ArrayList<>();
+    		assistTool.insert(initial);
+    		twinTool.insert(initial.twin());
+    		while (!twinTool.isEmpty() && !assistTool.isEmpty()) {
+    			Board minBoard = assistTool.delMin();
+    			Board minBoard2 = twinTool.delMin();
+    			orig.add(minBoard);
+    			twin.add(minBoard2);
+    			if (minBoard2.manhattan() == 0) { move = -1; break ; }
+    			if (minBoard.manhattan() == 0) {
+    				solvable = true;
+    				solList = new ArrayList<>(orig);
+    				break ;
+    			}
+    			//ArrayList<Board> tmpList = (ArrayList<Board>) minBoard.neighbors();
+    			//ArrayList<Board> twinList = (ArrayList<Board>) minBoard2.neighbors();
+    			++move;
+    			for (Board hound : minBoard.neighbors()) {
+    				if (!orig.contains(hound))
+    					assistTool.insert(hound);
+    			}
+    			for (Board hound : minBoard2.neighbors()) {
+    				if (!twin.contains(hound))
+    					twinTool.insert(hound);
+    			}
+    		}

@@ -27,7 +27,7 @@ public class Inversion {
         return a.compareTo(b) < 0;
     }
 
-    private static int count(Comparable arr[], Comparable aux[], int lo, int hi) {
+    private static int      count(Comparable arr[], Comparable aux[], int lo, int hi) {
         int result = 0;
         if (hi - lo <= CUTOFF) {
             result = insertionSort(aux, lo, hi);
