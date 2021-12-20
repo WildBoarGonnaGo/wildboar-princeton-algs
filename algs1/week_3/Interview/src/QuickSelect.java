@@ -29,8 +29,6 @@ public class QuickSelect {
         arr[j] = buffer;
     }
 
-    private static boolean  less(Comparable a, Comparable b) { return a.compareTo(b) < 0; }
-
     public static       LinkedList<Comparable> listOfDecDominants(Comparable[] a) {
         StdRandom.shuffle(a);
         LinkedList<Comparable>  result = new LinkedList<>();

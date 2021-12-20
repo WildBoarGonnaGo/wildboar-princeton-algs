@@ -1,0 +1,4 @@
+./8puzzle-cmake-debug/*
+./8puzzle-cmake-debugInfo/*
+./8puzzle-cmake-minbuild/*
+./8puzzle-cmake-release/*
