@@ -17,7 +17,7 @@ public:
 	bool				isGoal();
 	std::queue<Board *>	neigbors();
 	friend bool			operator==(const Board &lval, const Board &rval);
-	Board				twin();
+	Board*				twin();
 	~Board();
 };
 

@@ -30,9 +30,9 @@ int			Board::hamming() {
 	int	hamm = 0;
 
 	for (int i = 0; i < _size; ++i) {
-		for (int j = 0; j < _size - 1; ++j) {
-			if (i != _size - 1 && j != _size - 1)
-				hamm += (_tiles[i][j] != i + j + 1);
+		for (int j = 0; j < _size; ++j) {
+			if (i == _size - 1 && j == _size - 1) continue ;
+			else hamm += (_tiles[i][j] != i * _size + j + 1);
 		}
 	}
 	return hamm;
@@ -79,7 +79,7 @@ std::queue<Board *>	Board::neigbors() {
 	std::queue<Board *>	result;
 	int				initHi = _size * _size - 1;
 	int*			tilePtr = manhattan(0, 0, initHi);
-	int zeroRow = _size - tilePtr[0], zeroCol = _size - tilePtr[1];
+	int zeroRow = _size - tilePtr[0] - 1, zeroCol = _size - tilePtr[1] - 1;
 	if (zeroCol > 0) {
 		exch(_tiles, zeroRow, zeroCol, zeroRow, zeroCol - 1);
 		result.push(new Board(_tiles, _size));
@@ -119,6 +119,24 @@ void				Board::exch(int **arr, int irow,
 	int buffer = arr[irow][icol];
 	arr[irow][icol] = arr[jrow][jcol];
 	arr[jrow][jcol] = buffer;
+}
+
+Board				*Board::twin() {
+	int	**copy = new int*[_size];
+	for (int i = 0; i < _size; ++i) {
+		copy[i] = new int[_size];
+		for (int j = 0; j < _size; ++j) copy[i][j] = _tiles[i][j];
+	}
+	int pos = 0;
+	if (!copy[pos / _size][pos % _size]) ++pos;
+	int irow = pos / _size, icol = pos++ % _size;
+	if (!copy[pos / _size][pos % _size]) ++pos;
+	int jrow = pos / _size, jcol = pos % _size;
+	exch(copy, irow, icol, jrow, jcol);
+	Board	*result = new Board(copy, _size);
+	for (int i = 0; i < _size; ++i) delete[] copy[i];
+	delete[] copy;
+	return result;
 }
 
 Board::~Board() {

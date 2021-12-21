@@ -22,6 +22,8 @@ int main(int argc, char *argv[]) {
 		std::cout << "roll.manhattan() = " + std::to_string(roll->manhattan()) << std::endl;
 		delete roll;
 	}
+	std::cout << "TWIN BOARD" << std::endl;
+	std::cout << test->twin()->toString();
 	for (int i = 0; i < size; ++i) delete[] tiles[i];
 	delete[] tiles;
 	delete test;
