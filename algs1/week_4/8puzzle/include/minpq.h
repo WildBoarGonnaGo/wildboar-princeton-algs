@@ -7,7 +7,7 @@
 
 template<class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key> >
 		class MinPQ {
-
+			
 };
 
 #endif //MINPQ_H

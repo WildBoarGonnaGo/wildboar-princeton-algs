@@ -1,10 +1,14 @@
-import edu.princeton.cs.algs4.*;
-
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.StdOut;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 public class PointSET {
-    TreeSet<Point2D>    pointSet;
+    private TreeSet<Point2D>    pointSet;
 
     //construct an empty set of points
     public          PointSET() {
@@ -56,7 +60,8 @@ public class PointSET {
     //a nearest neighbor in the set to point p; null if the set it empty
     public Point2D              nearest(Point2D p) {
         if (p == null) throw new IllegalArgumentException();
-        double  r = Double.MAX_VALUE;
+        if (isEmpty()) return null;
+        double  r = Double.POSITIVE_INFINITY;
         Point2D result = null;
         Iterator<Point2D>   it = pointSet.iterator();
         while (it.hasNext()) {

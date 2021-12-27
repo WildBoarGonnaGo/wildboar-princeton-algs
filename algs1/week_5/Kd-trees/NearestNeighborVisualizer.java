@@ -24,14 +24,23 @@ public class NearestNeighborVisualizer {
         In in = new In(filename);
         PointSET brute = new PointSET();
         KdTree kdtree = new KdTree();
+        double[] rect = new double[4];
+        rect[0] = Double.MAX_VALUE; rect[1] = Double.MAX_VALUE;
+        rect[2] = Double.MIN_VALUE; rect[2] = Double.MIN_VALUE;
         while (!in.isEmpty()) {
             double x = in.readDouble();
             double y = in.readDouble();
+            if (rect[0] > x) rect[0] = x;
+            if (rect[1] > y) rect[1] = y;
+            if (rect[2] < x) rect[2] = x;
+            if (rect[3] < y) rect[3] = y;
             Point2D p = new Point2D(x, y);
             kdtree.insert(p);
             brute.insert(p);
         }
 
+        StdDraw.setXscale(rect[0] - 1.0, rect[2] + 1.0);
+        StdDraw.setYscale(rect[1] - 1.0, rect[3] + 1.0);
         // process nearest neighbor queries
         StdDraw.enableDoubleBuffering();
         while (true) {

@@ -26,9 +26,14 @@ public class RangeSearchVisualizer {
         In in = new In(filename);
         PointSET brute = new PointSET();
         KdTree kdtree = new KdTree();
+        double[] rectArr = new double[4];
         while (!in.isEmpty()) {
             double x = in.readDouble();
             double y = in.readDouble();
+            if (rectArr[0] > x) rectArr[0] = x;
+            if (rectArr[1] > y) rectArr[1] = y;
+            if (rectArr[2] < x) rectArr[2] = x;
+            if (rectArr[3] < y) rectArr[3] = y;
             Point2D p = new Point2D(x, y);
             kdtree.insert(p);
             brute.insert(p);
@@ -36,6 +41,8 @@ public class RangeSearchVisualizer {
 
         double x0 = 0.0, y0 = 0.0;      // initial endpoint of rectangle
         double x1 = 0.0, y1 = 0.0;      // current location of mouse
+        StdDraw.setXscale(rectArr[0] - 1.0, rectArr[2] + 1.0);
+        StdDraw.setYscale(rectArr[1] - 1.0, rectArr[3] + 1.0);
         boolean isDragging = false;     // is the user dragging a rectangle
 
         // draw the points
