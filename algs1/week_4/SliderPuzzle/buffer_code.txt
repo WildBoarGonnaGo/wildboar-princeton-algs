@@ -69,15 +69,15 @@ private static int		insertion(int[] arr, int lo, int hi) {
     		solvable = false;
     		if (initial == null) throw new IllegalArgumentException();
     		this.initial = initial;
-    		MinPQ<Board> assistTool = new MinPQ<>(new hammPriority());
-    		MinPQ<Board> twinTool = new MinPQ<>(new hammPriority());
-    		ArrayList<Board> orig = new ArrayList<>();
-    		ArrayList<Board> twin = new ArrayList<>();
+    		MinPQ<BoardField> assistTool = new MinPQ<>(new hammPriority());
+    		MinPQ<BoardField> twinTool = new MinPQ<>(new hammPriority());
+    		ArrayList<BoardField> orig = new ArrayList<>();
+    		ArrayList<BoardField> twin = new ArrayList<>();
     		assistTool.insert(initial);
     		twinTool.insert(initial.twin());
     		while (!twinTool.isEmpty() && !assistTool.isEmpty()) {
-    			Board minBoard = assistTool.delMin();
-    			Board minBoard2 = twinTool.delMin();
+    			BoardField minBoard = assistTool.delMin();
+    			BoardField minBoard2 = twinTool.delMin();
     			orig.add(minBoard);
     			twin.add(minBoard2);
     			if (minBoard2.manhattan() == 0) { move = -1; break ; }
@@ -86,14 +86,14 @@ private static int		insertion(int[] arr, int lo, int hi) {
     				solList = new ArrayList<>(orig);
     				break ;
     			}
-    			//ArrayList<Board> tmpList = (ArrayList<Board>) minBoard.neighbors();
-    			//ArrayList<Board> twinList = (ArrayList<Board>) minBoard2.neighbors();
+    			//ArrayList<BoardField> tmpList = (ArrayList<BoardField>) minBoard.neighbors();
+    			//ArrayList<BoardField> twinList = (ArrayList<BoardField>) minBoard2.neighbors();
     			++move;
-    			for (Board hound : minBoard.neighbors()) {
+    			for (BoardField hound : minBoard.neighbors()) {
     				if (!orig.contains(hound))
     					assistTool.insert(hound);
     			}
-    			for (Board hound : minBoard2.neighbors()) {
+    			for (BoardField hound : minBoard2.neighbors()) {
     				if (!twin.contains(hound))
     					twinTool.insert(hound);
     			}

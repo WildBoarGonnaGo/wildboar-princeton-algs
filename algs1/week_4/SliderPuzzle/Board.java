@@ -99,8 +99,8 @@ public class Board {
 	public boolean	equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof Board)) return false;
-		Board board = (Board) o;
-		return n == board.n && tilesEq(board.tiles);
+		Board Board = (Board) o;
+		return n == Board.n && tilesEq(Board.tiles);
 	}
 
 	//a neighboring boards
@@ -132,7 +132,7 @@ public class Board {
 		return neighList;
 	}
 
-	public Board		twin() {
+	public Board twin() {
 		int[][]	copy = new int[n][n];
 		for (int i = 0; i < n; ++i) {
 			for (int j = 0; j < n; ++j) copy[i][j] = tiles[i][j];
@@ -150,10 +150,10 @@ public class Board {
 	public static void	main(String[] args) {
 		int count = 0;
 		int[][]	sample = { {1, 0, 3}, {4, 2, 5}, {7, 8, 6} };
-		Board	sampleBoard = new Board(sample);
+		Board sampleBoard = new Board(sample);
 		StdOut.println(sampleBoard.toString());
 		int[][]	sample2 = { {8, 1, 3}, {4, 0, 2}, {7, 6, 5} };
-		Board	sampleBoard2 = new Board(sample2);
+		Board sampleBoard2 = new Board(sample2);
 		StdOut.println("sampleBoard2.hamming() = " + sampleBoard2.hamming());
 		StdOut.println("sampleBoard2.manhattan() = " + sampleBoard2.manhattan());
 		ArrayDeque<Board>	sampleNeighbors = (ArrayDeque<Board>) sampleBoard.neighbors();
@@ -171,7 +171,7 @@ public class Board {
 		StdOut.println(sampleBoard2.toString());
 		StdOut.println("hamming: " + sampleBoard2.hamming());
 		StdOut.println("manhattan: " + sampleBoard2.manhattan());
-		sampleNeighbors = (ArrayDeque<Board>) sampleBoard2 .neighbors();
+		sampleNeighbors = (ArrayDeque<Board>) sampleBoard2.neighbors();
 		count = 0;
 		for (Board zombie : sampleNeighbors) {
 			StdOut.println("\nneighbor " + ++count);

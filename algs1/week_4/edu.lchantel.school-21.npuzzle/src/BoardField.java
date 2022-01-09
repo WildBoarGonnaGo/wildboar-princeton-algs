@@ -1,0 +1,182 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Scanner;
+
+public abstract class BoardField implements Comparable<BoardField> {
+    protected int[][]           tiles;
+    protected int               n;
+    protected int               move;
+    protected boolean           solvable;
+    protected int               zeroRow;
+    private static final int    INNER_BOUND = 3;
+
+    public                      BoardField(int[][] tiles, int n) {
+        if (n == 0 || tiles == null) throw new IllegalArgumentException();
+        this.n = n;
+        this.tiles = new int[n][n];
+        move = 0;
+        zeroRow = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                this.tiles[i][j] = tiles[i][j];
+                if (tiles[i][j] == 0) zeroRow = n - i;
+            }
+        }
+        solvable = checkSolve();
+    }
+
+    public                      BoardField(int[][] tiles, int n, int move) {
+        if (n == 0 || tiles == null) throw new IllegalArgumentException();
+        this.n = n;
+        this.tiles = new int[n][n];
+        this.move = move;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) this.tiles[i][j] = tiles[i][j];
+        }
+        solvable = checkSolve();
+    }
+
+    public                      BoardField(String fileName) {
+        Scanner scan = null;
+        try {
+            scan = new Scanner(new File(fileName));
+            scan.useDelimiter("\\u000A");
+            if (scan.hasNext("(\\d)+")) n = scan.nextInt();
+            else throw new IllegalArgumentException("Error: wrong board file syntax: wrong size input");
+            tiles = new int[n][n];
+            String tmp = Integer.toString(n - 1);
+            for (int i = 0; i < n; ++i) {
+                if (scan.hasNext("((\\d)+(\\s)){" + tmp + "}?(\\d)+")) {
+                    scan.useDelimiter("\\s");
+                    for (int j = 0; j < n; ++j) tiles[i][j] = scan.nextInt();
+                } else throw new IllegalArgumentException("Error: wrong board file syntax: wrong row input");
+                scan.useDelimiter("\\u000A");
+            }
+            solvable = checkSolve();
+        } catch (FileNotFoundException exc) { exc.printStackTrace(); }
+    }
+
+    public                      BoardField(BoardField that) {
+        if (this.equals(that)) return;
+        n = that.n;
+        move = that.move;
+        tiles = new int[n][n];
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) tiles[i][j] = that.tiles[i][j];
+        }
+    }
+
+    public boolean              compFields(int[][] that) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j)
+                if (tiles[i][j] != that[i][j]) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean              equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoardField boardField = (BoardField) o;
+        return n == boardField.n && compFields(boardField.tiles);
+    }
+
+    @Override
+    public int                  hashCode() {
+        int result = Objects.hash(n);
+        result = 31 * result + Arrays.hashCode(tiles);
+        return result;
+    }
+
+    protected int[]              binSearch(int v, int lo, int hi) {
+        if (lo > hi) return null;
+        int[]   manh = null;
+        int res, mid = lo + (hi - lo) / 2, exRow = (v == 0) ? n - 1 : (v - 1) / n,
+        exCol = (v == 0) ? n - 1 : (v - 1) % n, row = mid / n, col = mid % n;
+        if (tiles[row][col] == v) {
+            manh = new int[2];
+            manh[0] = Math.abs(row - exRow);
+            manh[1] = Math.abs(col - exCol);
+            return manh;
+        }
+        if (manh == null) manh = binSearch(v, lo, mid - 1);
+        if (manh == null) manh = binSearch(v, mid + 1, hi);
+        return manh;
+    }
+
+    public int                  move() { return this.move; }
+
+    protected void              exch(int[][] arr, int irow, int icol,
+                             int jrow, int jcol) {
+        int buffer = arr[irow][icol];
+        arr[irow][icol] = arr[jrow][jcol];
+        arr[jrow][jcol] = buffer;
+    }
+
+    abstract MinPQ<BoardField>  neighbors(int move);
+
+    abstract BoardField         twin();
+
+    public int                  size() { return n; }
+
+    private int                 partition(int[][] arr, int lo, int hi, int inv) {
+        int i = lo, j = hi + 1;
+        while (true) {
+            while (arr[++i / n][i % n] < arr[lo / n][lo % n]) if (i == hi) break ;
+            while (arr[--j / n][j % n] > arr[lo / n][lo % n]) if (j == lo) break ;
+            if (i >= j) break ;
+            exch(arr, j / n, j % n, i / n, i % n);
+            ++inv;
+        }
+        exch(arr, j / n, j % n, lo / n, lo % n);
+        return j;
+    }
+
+    private int                 quickSort(int[][] arr, int lo, int hi) {
+        int inv = 0;
+        if (lo >= hi) return inv;
+        int mid = partition(arr, lo, hi, inv);
+        inv += quickSort(arr, lo, mid - 1);
+        inv += quickSort(arr, mid + 1, hi);
+        return inv;
+    }
+
+    /*
+    N - width of grid
+    1. if N is odd, the puzzle instance is solvable if number of inversions is even in input state
+    2. if N is even, puzzle instance is solvable if:
+        - the blank is on the even row counting from bottom and number of inversions is odd
+        - the blang is on odd row counting from the bottom, and number of inversions is even
+    3. For all other cases, the puzzle instance is not solvable
+    * */
+    private boolean             checkSolve() {
+        int res = 0;
+        int[][] copy = new int[n][n];
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) copy[i][j] = tiles[i][j];
+        }
+        res = quickSort(copy, 0, n * n - 1) + ((n % 2 == 0) ? zeroRow : 0);
+        copy = null;
+        return res % 2 != 0;
+    }
+
+    @Override
+    public String               toString() {
+        StringBuilder   buildStr = new StringBuilder();
+        buildStr.append(n);
+        buildStr.append('\n');
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                buildStr.append(' ');
+                buildStr.append(tiles[i][j]);
+            }
+            buildStr.append('\n');
+        }
+        return buildStr.toString();
+    }
+
+    public boolean      isSolvable() { return solvable; }
+}
