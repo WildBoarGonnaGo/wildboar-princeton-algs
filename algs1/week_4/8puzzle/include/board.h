@@ -8,6 +8,7 @@ class Board {
 	int		_size;
 	int*	manhattan(int value, int lo, int hi);
 	void	exch(int **arr, int irow, int icol, int jrow, int jcol);
+	int		_move;
 public:
 	Board(int **tiles, int size);
 	std::string			toString();

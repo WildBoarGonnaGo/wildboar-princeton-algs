@@ -1,5 +1,6 @@
 #include <iostream>
 #include "board.h"
+#include "minpq.h"
 
 int main(int argc, char *argv[]) {
 	int		size = 3;
@@ -23,8 +24,19 @@ int main(int argc, char *argv[]) {
 		delete roll;
 	}
 	std::cout << "TWIN BOARD" << std::endl;
-	std::cout << test->twin()->toString();
+	std::cout << test->twin()->toString() << std::endl;
 	for (int i = 0; i < size; ++i) delete[] tiles[i];
+	MinPQ<int>	*testPQ = new MinPQ<int>();
+	testPQ->enqueue(5);
+	testPQ->enqueue(4);
+	testPQ->enqueue(3);
+	testPQ->enqueue(2);
+	testPQ->enqueue(1);
+	std::cout << "Size of testPQ: " << testPQ->getSize() << std::endl;
+	std::cout << "Elements of testPQ: ";
+	while (!testPQ->isEmpty())
+		std::cout << testPQ->dequeue() << ((testPQ->isEmpty()) ? '\n' : ' ');
+	delete testPQ;
 	delete[] tiles;
 	delete test;
 	return (0);
