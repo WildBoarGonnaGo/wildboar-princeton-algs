@@ -39,32 +39,21 @@ public class SolveDriver {
 		}
 		BoardField			destBoard = getInstance(var, destM, n);
 		BoardField			rival = getInstance(var, smpl);
-		BoardField			rivalTwin = getInstance(var, smpl.twin());
+		if (!rival.isSolvable()) { solvable = false; return ; }
 		MinPQ<BoardField>	rivalQueue = new MinPQ<>();
-		MinPQ<BoardField>	twinQueue = new MinPQ<>();
 		rivalQueue.enqueue(rival);
-		twinQueue.enqueue(rivalTwin);
 		path = new LinkedList<>();
 		LinkedList<BoardField>	sythPlan = new LinkedList<>();
-		while (!rivalQueue.isEmpty() && !twinQueue.isEmpty()) {
+		while (!rivalQueue.isEmpty()) {
 			BoardField	jedy = rivalQueue.dequeue();
-			BoardField	syth = twinQueue.dequeue();
 			path.addLast(jedy);
-			sythPlan.addLast(syth);
 			if (jedy.equals(destBoard)) { solvable = true; return; }
-			else if (syth.equals(destBoard)) { path = null; return ; }
 			++moves;
 			MinPQ<BoardField>	jedyQueue = jedy.neighbors(moves);
-			MinPQ<BoardField>	sythQueue = syth.neighbors(moves);
 			while (!jedyQueue.isEmpty()) {
 				if (path.isEmpty() || !path.getLast().equals(jedyQueue.min()))
 					rivalQueue.enqueue(jedyQueue.dequeue());
 				else jedyQueue.dequeue();
-			}
-			while(!sythQueue.isEmpty()) {
-				if (sythPlan.isEmpty() || !sythPlan.getLast().equals(sythQueue.min()))
-					twinQueue.enqueue(sythQueue.dequeue());
-				else sythQueue.dequeue();
 			}
 		}
 	}
@@ -74,4 +63,6 @@ public class SolveDriver {
 	public int						moves() { return moves; }
 
 	public LinkedList<BoardField>	solveList() { return path; }
+
+
 }

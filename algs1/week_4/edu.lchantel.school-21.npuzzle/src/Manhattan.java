@@ -19,7 +19,7 @@ public class Manhattan extends BoardField {
 	@Override
 	MinPQ<BoardField>   	neighbors(int move) {
 		MinPQ<BoardField>   result = new MinPQ<BoardField>();
-		int[] manh = quickSearch(0, 0, n * n - 1);
+		int[] manh = binSearch(0, 0, n * n - 1);
 		int row = n - 1 - manh[0], col = n - 1 - manh[1];
 		if (row > 0) {
 			exch(tiles, row, col, row - 1, col);
@@ -54,7 +54,7 @@ public class Manhattan extends BoardField {
 			for (int j = 0; j < n; ++j) {
 				if (i == n - 1 && j == n - 1) break ;
 				else {
-					int[] tmp = quickSearch(i * n + j + 1, 0, n * n - 1);
+					int[] tmp = binSearch(i * n + j + 1, 0, n * n - 1);
 					manh += tmp[0] + tmp[1];
 				}
 			}
@@ -63,12 +63,18 @@ public class Manhattan extends BoardField {
 	}
 
 	public BoardField		twin() {
-		BoardField      result = new Manhattan(tiles, n, move);
+		int[][] copy = new int[n][n];
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) copy[i][j] = tiles[i][j];
+		}
 		int pos = 0;
 		int prevPos = pos;
-		while (tiles[pos / n][++pos % n] == 0) ;
-		exch(result.tiles, pos / n, pos % n,
-			prevPos / n, prevPos % n);
+		while (copy[prevPos / n][++prevPos % n] == 0) ;
+		pos = prevPos;
+		while (copy[pos / n][++pos % n] == 0) ;
+		exch(copy, pos / n, pos % n,
+				prevPos / n, prevPos % n);
+		BoardField      result = new Manhattan(copy, n);
 		return result;
 	}
 
@@ -90,5 +96,9 @@ public class Manhattan extends BoardField {
 		}
 		System.out.println("Twin of original:");
 		System.out.println(test.twin().toString());
+		System.out.print("Is Board solvable: ");
+		System.out.println(test.isSolvable());
+		System.out.print("Is twin board solvable: ");
+		System.out.println(test.twin().isSolvable());
 	}
 }

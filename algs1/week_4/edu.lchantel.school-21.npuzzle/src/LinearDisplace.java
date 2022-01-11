@@ -30,7 +30,7 @@ public class LinearDisplace extends BoardField {
 	@Override
 	MinPQ<BoardField>   	neighbors(int move) {
 		MinPQ<BoardField>   result = new MinPQ<BoardField>();
-		int[] manh = quickSearch(0, 0, n * n - 1);
+		int[] manh = binSearch(0, 0, n * n - 1);
 		int row = n - 1 - manh[0], col = n - 1 - manh[1];
 		if (row > 0) {
 			exch(tiles, row, col, row - 1, col);
@@ -61,12 +61,18 @@ public class LinearDisplace extends BoardField {
 
 
 	public BoardField		twin() {
-		BoardField      result = new LinearDisplace(tiles, n, move);
+		int[][] copy = new int[n][n];
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) copy[i][j] = tiles[i][j];
+		}
 		int pos = 0;
 		int prevPos = pos;
-		while (tiles[pos / n][++pos % n] == 0) ;
-		exch(result.tiles, pos / n, pos % n,
-			prevPos / n, prevPos % n);
+		while (copy[prevPos / n][++prevPos % n] == 0) ;
+		pos = prevPos;
+		while (copy[pos / n][++pos % n] == 0) ;
+		exch(copy, pos / n, pos % n,
+				prevPos / n, prevPos % n);
+		BoardField      result = new LinearDisplace(copy, n);
 		return result;
 	}
 
@@ -83,10 +89,14 @@ public class LinearDisplace extends BoardField {
 		int number = 0;
 		while (!testPQ.isEmpty()) {
 			LinearDisplace	tmp = (LinearDisplace) testPQ.min();
-			System.out.println("hamming(" + number + "): " + tmp.hamming());
+			System.out.println("hamming(" + number++ + "): " + tmp.hamming());
 			System.out.println(testPQ.dequeue().toString());
 		}
 		System.out.println("Twin of original:");
 		System.out.println(test.twin().toString());
+		System.out.print("Is Board solvable: ");
+		System.out.println(test.isSolvable());
+		System.out.print("Is twin board solvable: ");
+		System.out.println(test.twin().isSolvable());
 	}
 }

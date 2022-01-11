@@ -6,7 +6,7 @@ public class MinPQ<Key extends Comparable<Key>> {
         Node    next;
         Node(Key key) { this.key = key; next = null; }
         Node(Key key, Node next) { this.key = key; this.next = next; }
-    }
+    };
     private Node    root;
     private int     size;
     //Create an empty priority queue

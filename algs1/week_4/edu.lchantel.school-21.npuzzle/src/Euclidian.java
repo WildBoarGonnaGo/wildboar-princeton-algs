@@ -21,7 +21,7 @@ public class Euclidian extends BoardField {
 	}
 
 	@Override
-	public int	compareTo(BoardField op) {
+	public int				compareTo(BoardField op) {
 		Euclidian tmp = new Euclidian(op);
 		double diff = this.euclidian() + this.move - tmp.euclidian() - tmp.move;
 		if (diff < 0) return -1;
@@ -63,16 +63,22 @@ public class Euclidian extends BoardField {
 
 
 	public BoardField		twin() {
-		BoardField      result = new Euclidian(tiles, n, move);
+		int[][] copy = new int[n][n];
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) copy[i][j] = tiles[i][j];
+		}
 		int pos = 0;
 		int prevPos = pos;
-		while (tiles[pos / n][++pos % n] == 0) ;
-		exch(result.tiles, pos / n, pos % n,
+		while (copy[prevPos / n][++prevPos % n] == 0) ;
+		pos = prevPos;
+		while (copy[pos / n][++pos % n] == 0) ;
+		exch(copy, pos / n, pos % n,
 			prevPos / n, prevPos % n);
+		BoardField      result = new Euclidian(copy, n);
 		return result;
 	}
 
-	public static void  main(String[] args) {
+	public static void  	main(String[] args) {
 		int size = 0;
 		if (args.length == 0) {
 			System.out.println("Usage of BoardField program: java BoardField <filename>");
@@ -85,10 +91,14 @@ public class Euclidian extends BoardField {
 		int number = 0;
 		while (!testPQ.isEmpty()) {
 			Euclidian	tmp = (Euclidian) testPQ.min();
-			System.out.println("euclidian(" + number + "): " + tmp.euclidian());
+			System.out.println("euclidian(" + number++ + "): " + tmp.euclidian());
 			System.out.println(testPQ.dequeue().toString());
 		}
 		System.out.println("Twin of original:");
 		System.out.println(test.twin().toString());
+		System.out.print("Is Board solvable: ");
+		System.out.println(test.isSolvable());
+		System.out.print("Is twin board solvable: ");
+		System.out.println(test.twin().isSolvable());
 	}
 }
