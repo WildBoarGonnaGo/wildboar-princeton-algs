@@ -51,16 +51,15 @@ public abstract class BoardField implements Comparable<BoardField> {
             tiles = new int[n][n];
             String tmp = Integer.toString(n - 1);
             for (int i = 0; i < n; ++i) {
-                if (scan.hasNext("\\s*(\\d+\\s+){" + tmp + "}?\\d+\\s+(#.*)?")) {
-                    scan.useDelimiter("\\s");
+                if (scan.hasNext("\\s*(\\d+\\s+){" + tmp + "}?\\d+(\\s+#.*)?")) {
+                    scan.useDelimiter("\\s+");
                     for (int j = 0; j < n; ++j) {
-                        scan.skip("\\s");
                         tiles[i][j] = scan.nextInt();
                         if (tiles[i][j] == 0) zeroRow = n - i;
                     }
                 } else throw new IllegalArgumentException("Error: wrong board file syntax: wrong row input");
                 if (scan.hasNext("(#.*)+"))
-                    scan.next("(#.*)+");
+                    scan.nextLine();
                 scan.useDelimiter("\\u000A");
             }
             solvable = checkSolve();
@@ -91,8 +90,7 @@ public abstract class BoardField implements Comparable<BoardField> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BoardField boardField = (BoardField) o;
-        return n == boardField.n && compFields(boardField.tiles) &&
-                move == boardField.move;
+        return n == boardField.n && compFields(boardField.tiles);
     }
 
     @Override
