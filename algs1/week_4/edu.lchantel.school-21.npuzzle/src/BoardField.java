@@ -45,7 +45,7 @@ public abstract class BoardField implements Comparable<BoardField> {
         try {
             scan = new Scanner(new File(fileName));
             scan.useDelimiter("\\u000A");
-            if (scan.hasNext("(#.*)?")) scan.nextLine();
+            while (scan.hasNext("(#.*)?")) scan.nextLine();
             if (scan.hasNext("(\\d)+(#.*)?")) n = scan.nextInt();
             else throw new IllegalArgumentException("Error: wrong board file syntax: wrong size input");
             tiles = new int[n][n];
@@ -190,8 +190,8 @@ public abstract class BoardField implements Comparable<BoardField> {
         buildStr.append('\n');
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
-                buildStr.append(' ');
-                buildStr.append(tiles[i][j]);
+                String  form = String.format("%3d", tiles[i][j]);
+                buildStr.append(form);
             }
             buildStr.append('\n');
         }

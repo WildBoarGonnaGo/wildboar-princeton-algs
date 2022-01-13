@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.io.File;
+import java.util.ArrayList;
 
 public class NPuzzle {
 	private	boolean					solvable;
@@ -7,7 +8,34 @@ public class NPuzzle {
 	private LinkedList<BoardField>	path;
 	private int						cSize;
 	private int						cTime;
-	private BoardField				rival;
+	private Node					rival;
+
+	private class Node implements Comparable<Node> {
+		public	Node				prev;
+		private final BoardField	data;
+		private final int			move;
+
+		public				Node(BoardField data) {
+			this.data = data;
+			move = 0;
+			prev = null;
+		}
+		public				Node(BoardField data, int move) {
+			this.data = data;
+			this.move = move;
+			prev = null;
+		}
+		public				Node(BoardField data, int move, Node prev) {
+			this.data = data;
+			this.move = move;
+			this.prev = prev;
+		}
+
+		@Override
+		public int	compareTo(Node that) {
+			return this.data.compareTo(that.data);
+		}
+	}
 
 	private	BoardField	getInstance(int var, int[][] board, int n) {
 		if (var == 1) return new Manhattan(board, n);
@@ -29,10 +57,13 @@ public class NPuzzle {
 		solvable = false;
 		path = null;
 		cSize = 0;
-		moves = 0;
+		moves = -1;
 		int n = smpl.size();
-		rival = getInstance(var, smpl);
-		if (!rival.isSolvable()) { solvable = false; return ; }
+		rival = new Node(getInstance(var, smpl));
+		if (!smpl.isSolvable()) {
+			solvable = false;
+			return ;
+		}
 		int[][] destM = new int[n][n];
 		for (int i = 0; i < n; ++i) {
 			for (int j = 0; j < n; ++j) {
@@ -40,22 +71,35 @@ public class NPuzzle {
 				else destM[i][j] = i * n + j + 1;
 			}
 		}
-		BoardField			destBoard = getInstance(var, destM, n);
-		MinPQ<BoardField>	rivalQueue = new MinPQ<>();
+		ArrayList<BoardField>	visited = new ArrayList(n * n);
+		BoardField				destBoard = getInstance(var, destM, n);
+		MinPQ<Node>				rivalQueue = new MinPQ<>();
+		Node					last = null;
 		rivalQueue.enqueue(rival);
 		path = new LinkedList<>();
 		while (!rivalQueue.isEmpty()) {
-			BoardField	jedy = rivalQueue.dequeue();
-			path.addLast(jedy);
-			if (jedy.equals(destBoard)) { solvable = true; return; }
-			++moves;
-			MinPQ<BoardField>	jedyQueue = jedy.neighbors(moves);
+			Node	jedy = rivalQueue.dequeue();
+			visited.add(jedy.data);
+			if (jedy.data.equals(destBoard)) {
+				solvable = true;
+				while (last != null) {
+					path.addFirst(last.data);
+					++moves;
+					last = last.prev;
+				}
+				return ;
+			}
+			MinPQ<BoardField>	jedyQueue = jedy.data.neighbors(jedy.move + 1);
 			cSize += jedyQueue.size();
 			while (!jedyQueue.isEmpty()) {
-				if (path.isEmpty() || !path.contains(jedyQueue.min()))
-					{ rivalQueue.enqueue(jedyQueue.dequeue()); ++cTime; }
+				if (visited.isEmpty() || !visited.contains(jedyQueue.min())) {
+					last = new Node(jedyQueue.dequeue(), jedy.move + 1, jedy);
+					rivalQueue.enqueue(last);
+					++cTime;
+				}
 				else jedyQueue.dequeue();
 			}
+			last = rivalQueue.min();
 		}
 	}
 
@@ -64,7 +108,7 @@ public class NPuzzle {
 	public LinkedList<BoardField>	solveList() { return path; }
 	public int						timeComplex() { return cTime; }
 	public int						sizeComplex() { return cSize; }
-	public BoardField				getRival() { return rival; }
+	public BoardField				getInitBoard() { return rival.data; }
 
 	public static void				main(String[] args) {
 		if (args.length != 2) {
@@ -87,13 +131,13 @@ public class NPuzzle {
 		}
 		if (!solve.isSolvable()) {
 			System.out.println("Puzzle:");
-			System.out.print(solve.getRival());
+			System.out.print(solve.getInitBoard());
 			System.out.println("... is unsolvable");
 		} else {
 			String	delimeter = "-------------";
 			System.out.println("Represented sequence of moves: ");
 			for (BoardField state : solve.solveList()) {
-				System.out.println(state.toString());
+				System.out.print(state.toString());
 				System.out.println(delimeter);
 			}
 			System.out.println("Total number of states ever selected (complexity in time): " + solve.timeComplex());
