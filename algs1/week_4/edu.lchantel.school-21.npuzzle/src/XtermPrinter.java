@@ -10,4 +10,13 @@ public class XtermPrinter implements BoardPrinter {
     private String  ANSI_CursorMove(int row, int col) {
         return ANSI_ESC + '{' + row + "};{" + col + "}H";
     }
+
+    private String  ANSI_Colored(boolean bold, byte color, String text) {
+        return ANSI_ESC + ((bold == true) ? "1;38;5;" : "38;5;") + color + 'm'
+            + text + ANSI_ESC + "0m";
+    }
+
+    private String  ANSI_eraseRow() {
+        return ANSI_ESC + ()
+    }
 }

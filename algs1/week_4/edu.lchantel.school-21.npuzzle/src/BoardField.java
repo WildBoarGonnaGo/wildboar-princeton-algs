@@ -199,4 +199,6 @@ public abstract class BoardField implements Comparable<BoardField> {
     }
 
     public boolean      isSolvable() { return solvable; }
+
+    public int[][]      getTiles() { return tiles; }
 }
