@@ -71,7 +71,7 @@ public class NPuzzle {
 				else destM[i][j] = i * n + j + 1;
 			}
 		}
-		ArrayList<BoardField>	visited = new ArrayList(n * n);
+		ArrayList<BoardField>	visited = new ArrayList(8192);
 		BoardField				destBoard = getInstance(var, destM, n);
 		MinPQ<Node>				rivalQueue = new MinPQ<>();
 		Node					last = null;
@@ -109,41 +109,4 @@ public class NPuzzle {
 	public int						timeComplex() { return cTime; }
 	public int						sizeComplex() { return cSize; }
 	public BoardField				getInitBoard() { return rival.data; }
-
-	public static void				main(String[] args) {
-		if (args.length != 2) {
-			System.err.println("NPuzzle: Error: wrong number of arguments");
-			System.exit(1) ;
-		}
-		File inputFile = new File(args[0]);
-		if (!inputFile.exists()) {
-			System.err.println("NPuzzle: Error: No such file");
-			System.exit(1) ;
-		}
-		NPuzzle	solve = null;
-		if (args[1].equals("-MAN")) solve = new NPuzzle(new Manhattan(args[0]), 1);
-		else if (args[1].equals("-LIN")) solve = new NPuzzle(new LinearDisplace(args[0]), 2);
-		else if (args[1].equals("-EUC")) solve = new NPuzzle(new Euclidian(args[0]), 3);
-		else if (args[1].equals("-OUT")) solve = new NPuzzle(new OutRowOutColumn(args[0]), 4);
-		else {
-			System.err.println("Usage: NPuzzle file -[MAN|LIN|EUC|OUT]");
-			System.exit(1);
-		}
-		if (!solve.isSolvable()) {
-			System.out.println("Puzzle:");
-			System.out.print(solve.getInitBoard());
-			System.out.println("... is unsolvable");
-		} else {
-			String	delimeter = "-------------";
-			System.out.println("Represented sequence of moves: ");
-			for (BoardField state : solve.solveList()) {
-				System.out.print(state.toString());
-				System.out.println(delimeter);
-			}
-			System.out.println("Total number of states ever selected (complexity in time): " + solve.timeComplex());
-			System.out.println("Maximum number of states ever represented in memory at the same time");
-			System.out.println("during the search (complexity in size): " + solve.sizeComplex());
-			System.out.println("Number of moves required for transition from initial to goal state: " + solve.moves());
-		}
-	}
 }
