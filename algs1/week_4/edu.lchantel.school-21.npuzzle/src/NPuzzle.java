@@ -1,6 +1,6 @@
 import java.util.LinkedList;
-import java.io.File;
 import java.util.ArrayList;
+//import edu.princeton.cs.algs4.MinPQ;
 
 public class NPuzzle {
 	private	boolean					solvable;
@@ -18,11 +18,6 @@ public class NPuzzle {
 		public				Node(BoardField data) {
 			this.data = data;
 			move = 0;
-			prev = null;
-		}
-		public				Node(BoardField data, int move) {
-			this.data = data;
-			this.move = move;
 			prev = null;
 		}
 		public				Node(BoardField data, int move, Node prev) {
@@ -73,12 +68,12 @@ public class NPuzzle {
 		}
 		ArrayList<BoardField>	visited = new ArrayList(8192);
 		BoardField				destBoard = getInstance(var, destM, n);
-		MinPQ<Node>				rivalQueue = new MinPQ<>();
+		edu.princeton.cs.algs4.MinPQ<Node>				rivalQueue = new edu.princeton.cs.algs4.MinPQ<>();
 		Node					last = null;
-		rivalQueue.enqueue(rival);
+		rivalQueue.insert(rival);
 		path = new LinkedList<>();
 		while (!rivalQueue.isEmpty()) {
-			Node	jedy = rivalQueue.dequeue();
+			Node	jedy = rivalQueue.delMin();
 			visited.add(jedy.data);
 			if (jedy.data.equals(destBoard)) {
 				solvable = true;
@@ -89,12 +84,12 @@ public class NPuzzle {
 				}
 				return ;
 			}
-			MinPQ<BoardField>	jedyQueue = jedy.data.neighbors(jedy.move + 1);
+			MinPQ<BoardField> jedyQueue = jedy.data.neighbors(jedy.move + 1);
 			cSize += jedyQueue.size();
 			while (!jedyQueue.isEmpty()) {
-				if (visited.isEmpty() || !visited.contains(jedyQueue.min())) {
+				if (jedy.prev == null || !jedy.prev.data.equals(jedyQueue.min())) {
 					last = new Node(jedyQueue.dequeue(), jedy.move + 1, jedy);
-					rivalQueue.enqueue(last);
+					rivalQueue.insert(last);
 					++cTime;
 				}
 				else jedyQueue.dequeue();
