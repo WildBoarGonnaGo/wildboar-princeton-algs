@@ -1,4 +1,4 @@
-# This puzzle is unsolvable
+# This puzzle is solvable
 3
  4 7 3
  2 0 8

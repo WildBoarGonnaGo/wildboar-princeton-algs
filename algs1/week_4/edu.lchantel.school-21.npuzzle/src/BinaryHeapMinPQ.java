@@ -9,7 +9,7 @@ public class BinaryHeapMinPQ <Key extends Comparable<Key> >{
 	BinaryHeapMinPQ(int capacity) {
 		this.capacity = capacity;
 		size = 0;
-		arr = (Key[]) new Comparable[this.capacity];
+		arr = (Key[]) new Comparable[this.capacity + 1];
 	}
 
 	BinaryHeapMinPQ() { this(1); }

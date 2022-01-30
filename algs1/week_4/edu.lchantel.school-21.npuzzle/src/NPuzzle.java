@@ -1,6 +1,4 @@
 import java.util.LinkedList;
-import java.util.ArrayList;
-//import edu.princeton.cs.algs4.MinPQ;
 
 public class NPuzzle {
 	private	boolean					solvable;
@@ -66,15 +64,13 @@ public class NPuzzle {
 				else destM[i][j] = i * n + j + 1;
 			}
 		}
-		ArrayList<BoardField>	visited = new ArrayList(8192);
 		BoardField				destBoard = getInstance(var, destM, n);
-		edu.princeton.cs.algs4.MinPQ<Node>				rivalQueue = new edu.princeton.cs.algs4.MinPQ<>();
+		BinaryHeapMinPQ<Node>	rivalQueue = new BinaryHeapMinPQ<>();
 		Node					last = null;
-		rivalQueue.insert(rival);
+		rivalQueue.enqueue(rival);
 		path = new LinkedList<>();
 		while (!rivalQueue.isEmpty()) {
-			Node	jedy = rivalQueue.delMin();
-			visited.add(jedy.data);
+			Node	jedy = rivalQueue.dequeue();
 			if (jedy.data.equals(destBoard)) {
 				solvable = true;
 				while (last != null) {
@@ -89,7 +85,7 @@ public class NPuzzle {
 			while (!jedyQueue.isEmpty()) {
 				if (jedy.prev == null || !jedy.prev.data.equals(jedyQueue.min())) {
 					last = new Node(jedyQueue.dequeue(), jedy.move + 1, jedy);
-					rivalQueue.insert(last);
+					rivalQueue.enqueue(last);
 					++cTime;
 				}
 				else jedyQueue.dequeue();

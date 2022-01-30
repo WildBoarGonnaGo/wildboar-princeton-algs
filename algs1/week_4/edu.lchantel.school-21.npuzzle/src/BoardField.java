@@ -176,7 +176,6 @@ public abstract class BoardField implements Comparable<BoardField> {
                 if (tiles[i][j] != 0) inspect[indx++] = tiles[i][j];
         }
         int[] aux = Arrays.copyOf(inspect, len);
-
         res = mergeSort(inspect, aux,0, indx - 1) + ((n % 2 == 0) ? zeroRow : 0);
         aux = null;
         inspect = null;

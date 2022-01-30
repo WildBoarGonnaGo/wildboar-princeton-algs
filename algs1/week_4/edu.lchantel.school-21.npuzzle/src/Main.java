@@ -4,11 +4,13 @@ public class Main {
 	public static void main(String args[]) {
 		if (args.length != 2) {
 			System.err.println("NPuzzle: Error: wrong number of arguments");
+			System.err.println("Usage: Main file -[MAN|LIN|EUC|OUT]");
 			System.exit(1) ;
 		}
 		File inputFile = new File(args[0]);
 		if (!inputFile.exists()) {
 			System.err.println("NPuzzle: Error: No such file");
+			System.err.println("Usage: Main file -[MAN|LIN|EUC|OUT]");
 			System.exit(1) ;
 		}
 		NPuzzle	solve = null;
